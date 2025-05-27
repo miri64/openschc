@@ -226,17 +226,37 @@ class ReassemblerNoAck(ReassembleBase):
                 for _ in self.tile_list:
                     dprint(_)
                 schc_packet = BitBuffer()
-                for i in self.tile_list:
-                    schc_packet += i
+                for i, frag in enumerate(self.tile_list):
+                    print("append", i, frag.count_remaining_bits(),
+                          frag.count_padding_bits())
+                    schc_packet += frag
                 #dtrace (binascii.hexlify(schc_packet.get_content()))
 
                 mic_calced = self.get_mic(schc_packet.get_content())
                 if schc_frag.mic != mic_calced:
-                    dtrace("ERROR: MIC mismatched. packet {} != result {}".format(
-                            b2hex(schc_frag.mic), b2hex(mic_calced)))
-                    self.state = 'ERROR_MIC_NO_ACK'
-                    self.protocol.session_manager.delete_session(self._session_id)
-                    return False
+                    if schc_packet.get_content()[-1] != 0:
+                        dtrace("ERROR: MIC mismatched. packet {} != result {}".format(
+                                b2hex(schc_frag.mic), b2hex(mic_calced)))
+                        self.state = 'ERROR_MIC_NO_ACK'
+                        self.protocol.session_manager.delete_session(self._session_id)
+                        return False
+                    else:
+                        # There might have been too much padding added in reassembly
+                        # due to MIC not fitting second to last fragment
+                        # => shave of last fragment and recalculate MIC
+                        dtrace("Checking for padding")
+                        tmp = schc_packet.get_content()
+                        mic_calced = self.get_mic(tmp[:-1])
+                        if schc_frag.mic == mic_calced:
+                            dtrace("SUCCESS: MIC matched. packet {} == result {}".format(
+                                schc_frag.mic, mic_calced))
+                            tmp_bits = (
+                                schc_packet.count_remaining_bits() -
+                                self.tile_list[-1].count_remaining_bits()
+                            )
+                            tmp = schc_packet.get_bits(tmp_bits)
+                            schc_packet = BitBuffer()
+                            schc_packet.add_bits(tmp, tmp_bits)
                 else:
                     dtrace("SUCCESS: MIC matched. packet {} == result {}".format(
                         schc_frag.mic, mic_calced))
