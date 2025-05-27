@@ -20,30 +20,6 @@ from compr_core import Compressor, Decompressor
 from gen_utils import dtrace
 import binascii
 
-class ConnectivityManager:
-    """
-    This class is aware of the connectivity condition for a device:
-    - current MTU
-    - error rate
-    - duty cycle
-    """
-
-    def __init__(self):
-        self.mtu = 5000
-
-    def get_mtu (self, device):
-        """
-        Return the MTU is bits for a specific device, currently returns always 500
-        """
-        return self.mtu
-
-    def set_mtu (self, mtu, device = None):
-        """
-        Return the MTU is bits for a specific device, currently returns always 500
-        """
-        self.mtu = mtu
-        
-
 
 # ---------------------------------------------------------------------------
 
@@ -193,8 +169,6 @@ class SCHCProtocol:
         self.session_manager = SessionManager(self, unique_peer)
         self.verbose = verbose
         self.sender_delay = 0
-
-        self.connectivity_manager = ConnectivityManager()
 
         if ((isinstance(config, object) and hasattr(config, "debug_level")) or
             (isinstance(config, dict) and config.get("debug_level", 0))):
@@ -350,7 +324,7 @@ class SCHCProtocol:
 
         # Start a fragmentation session from rule database
         # Check if fragmentation is needed.
-        if packet_bbuf.count_added_bits() < self.connectivity_manager.get_mtu(device_id):
+        if packet_bbuf.count_added_bits() < self.layer2.get_mtu_size():
             if verbose:
                 print("fragmentation not needed")
             args = (packet_bbuf.get_content(), destination)

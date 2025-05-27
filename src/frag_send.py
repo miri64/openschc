@@ -175,8 +175,7 @@ class FragmentNoAck(FragmentBase):
         #print(self.rule)
         min_size = (frag_msg.get_sender_header_size(self.rule) +
                         frag_msg.get_mic_size(self.rule) + self.l2word)   
-        #print ('MTU = ', self.protocol.connectivity_manager.get_mtu("toto"), min_size)
-        if self.protocol.connectivity_manager.get_mtu("toto") < min_size:
+        if self.protocol.layer2.get_mtu_size() < min_size:
             raise ValueError("the MTU={} is not enough to carry the SCHC fragment of No-ACK mode={}".format(self.mtu, min_size))
 
     def send_frag(self):
@@ -197,7 +196,6 @@ class FragmentNoAck(FragmentBase):
         #                    |<- L2 word size ->|<- less than ->|
         #                                         L2 word size
         #                                                       |<- L2 Word
-        mtu = self.protocol.connectivity_manager.get_mtu("toto")
         mtu = self.protocol.layer2.get_mtu_size()
         #print("MTU = ", mtu)
         payload_size = (mtu - frag_msg.get_sender_header_size(self.rule))
@@ -397,8 +395,7 @@ class FragmentAckOnError(FragmentBase):
         #     return
 
         # get contiguous tiles as many as possible fit in MTU.
-        # mtu_size = self.protocol.layer2.get_mtu_size()
-        mtu_size = self.protocol.connectivity_manager.get_mtu("toto")
+        mtu_size = self.protocol.layer2.get_mtu_size()
         print ("MTU at frag_send.py = ", mtu_size) 
         window_tiles, nb_remaining_tiles, remaining_size = self.all_tiles.get_tiles(mtu_size)
         #dprint("----window tiles to send: {}, nb_remaining_tiles: {}, remaining_size: {}".format(window_tiles, nb_remaining_tiles, remaining_size))
