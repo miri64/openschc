@@ -12,7 +12,7 @@ from compr_core import *
 from gen_utils import dtrace
 import binascii
 
-enable_statsct = True
+enable_statsct = False
 if enable_statsct:
     from stats.statsct import Statsct
 

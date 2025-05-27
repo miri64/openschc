@@ -18,7 +18,7 @@ try:
 except ImportError:
     import time
 
-enable_statsct = True
+enable_statsct = False
 if enable_statsct:
     from stats.statsct import Statsct
 
