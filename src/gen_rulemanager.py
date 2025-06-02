@@ -330,6 +330,7 @@ FIELD__DEFAULT_PROPERTY = {
     T_COAP_OPT_CONT_FORMAT : {"FL": "var", "TYPE": int, "ALGO": "COAP_OPTION"},
     T_COAP_OPT_ACCEPT      : {"FL": "var", "TYPE": int, "ALGO": "COAP_OPTION"},
     T_COAP_OPT_URI_QUERY   : {"FL": "var", "TYPE": str, "ALGO": "COAP_OPTION" },
+    T_COAP_OPT_PROXY_SCHEME: {"FL": "var", "TYPE": str, "ALGO": "COAP_OPTION" },
     T_COAP_OPT_NO_RESP     : {"FL": "var", "TYPE": int, "ALGO": "COAP_OPTION"},
     T_COAP_OPT_OBS         : {"FL": "var", "TYPE": int, "ALGO": "COAP_OPTION"}
 }
