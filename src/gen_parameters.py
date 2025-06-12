@@ -337,7 +337,9 @@ def adapt_value(value, length=None, FID=None):
 
         if FID in [
             T_IPV6_APP_IID, T_IPV6_APP_PREFIX, T_IPV6_DEV_IID, T_IPV6_DEV_PREFIX,
-            T_DTLS_REC_SEQ, T_DTLS_HS_LEN, T_DTLS_HS_FRAG_OFFSET, T_DTLS_HS_FRAG_LEN
+            T_DTLS_REC_SEQ, T_DTLS_HS_LEN, T_DTLS_HS_FRAG_OFFSET, T_DTLS_HS_FRAG_LEN,
+            T_DTLS_HS_CH_RANDOM, T_DTLS_HS_CH_COOKIE, T_DTLS_HS_SH_RANDOM,
+            T_DTLS_HS_SVR_COOKIE,
         ] and length != None:
             return value.to_bytes(length//8, byteorder='big')
         
